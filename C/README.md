@@ -12,3 +12,5 @@ coverY: 0
 
 ## 参考资料
 
+* [C 语言编程透视](https://tinylab-1.gitbook.io/cbook/) (有空多看看, 其中包含一些深入)
+
