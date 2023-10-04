@@ -24,9 +24,111 @@ description: 这一节我们深入 C 语言编译的几个过程来进行了解
 
 > 主要还是归属于两步 : 预处理指令的处理以及注释删除
 
-在这里我们可以通过下面的命令来查看预处理的输出 (有点长), 从输出中我们可以看到其主要做的操作还是实现程序所需资源的准备
+在这里我们可以通过下面的命令来查看预处理的输出 (有点长), 从输出中我们可以看到其主要做的操作, 其实可以将其归属于资源的准备
 
 ```sh
 $ gcc -E hello.c
 ```
+
+## 编译
+
+在编译之前, C 语言编译器会进行词法分析、语法分析, 接着会将我们的源代码<mark style="color:red;">**编译**</mark>成中间语言, 即汇编语言
+
+> 1. 如果我们使用编译器比如 VS 、Clion  等编译器的话, 我们在编写其间也会进行语法的分析, 但是这与编译阶段的语法分析没有任何关系
+> 2. 对于解释型语言来说, 也会经历词法分析、语法分析阶段, 不管之后<mark style="color:red;">**并不会进行编译**</mark>, 而是 "解释" , 边解释边执行
+
+{% tabs %}
+{% tab title="README" %}
+通常来说我们会执行下面的语言来实现编译的过程
+
+```bash
+$ gcc -S hello.c
+```
+{% endtab %}
+
+{% tab title="语法检查" %}
+如果仅仅希望进行语法检查，可以用 `gcc` 的 `-fsyntax-only` 选项
+
+```sh
+┌──(jtz㉿JTZ)-[~/C]
+└─$ cat hello.c
+#include <stdio.h>
+int main(){
+    printf("hello world")
+    return 0;
+}
+
+┌──(jtz㉿JTZ)-[~/C]
+└─$ gcc -fsyntax-only hello.c
+hello.c: In function ‘main’:
+hello.c:3:26: error: expected ‘;’ before ‘return’
+    3 |     printf("hello world")
+      |                          ^
+      |                          ;
+    4 |     return 0;
+      |     ~~~~~~
+
+```
+{% endtab %}
+
+{% tab title="编译" %}
+当语法检查通过之后就该执行编译操作, 将源代码编译为汇编语言
+
+```sh
+┌──(jtz㉿JTZ)-[~/C]
+└─$ gcc -S hello.c
+
+┌──(jtz㉿JTZ)-[~/C]
+└─$ cat hello.s
+        .file   "hello.c"
+        .text
+        .section        .rodata
+.LC0:
+        .string "hello world"
+        .text
+        .globl  main
+        .type   main, @function
+main:
+.LFB0:
+        .cfi_startproc
+        pushq   %rbp
+        .cfi_def_cfa_offset 16
+        .cfi_offset 6, -16
+        movq    %rsp, %rbp
+        .cfi_def_cfa_register 6
+        leaq    .LC0(%rip), %rax
+        movq    %rax, %rdi
+        movl    $0, %eax
+        call    printf@PLT
+        movl    $0, %eax
+        popq    %rbp
+        .cfi_def_cfa 7, 8
+        ret
+        .cfi_endproc
+.LFE0:
+        .size   main, .-main
+        .ident  "GCC: (Debian 12.2.0-14) 12.2.0"
+        .section        .note.GNU-stack,"",@progbits
+
+```
+{% endtab %}
+{% endtabs %}
+
+## 汇编
+
+本质上来说汇编还是翻译的过程, 只不过这次是将汇编代码编译成机器代码, 不过此时生成的代码还是不可以运行
+
+```bash
+┌──(jtz㉿JTZ)-[~/C]
+└─$ file hello.o
+hello.o: cannot open `hello.o' (No such file or directory)
+┌──(jtz㉿JTZ)-[~/C]
+└─$ gcc -C hello.s -o hello.o
+
+┌──(jtz㉿JTZ)-[~/C]
+└─$ file hello.o
+hello.o: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=87500146a349df57a9e19eb533796c446865a5b2, for GNU/Linux 3.2.0, not stripped
+```
+
+## 链接
 
