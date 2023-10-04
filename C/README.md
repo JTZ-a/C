@@ -16,3 +16,4 @@ coverY: 0
 有空多看看, 其中包含一些深入
 {% endembed %}
 
+{% embed url="https://www.javatpoint.com/c-programming-language-tutorial" %}
