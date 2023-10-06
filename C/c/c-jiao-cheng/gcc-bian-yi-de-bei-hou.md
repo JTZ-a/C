@@ -1,5 +1,21 @@
 ---
 description: 这一节我们深入 C 语言编译的几个过程来进行了解
+cover: https://w.wallhaven.cc/full/zy/wallhaven-zy9e8g.png
+coverY: -167
+layout:
+  cover:
+    visible: true
+    size: full
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
 ---
 
 # 🚲 Gcc 编译的背后
@@ -10,7 +26,7 @@ description: 这一节我们深入 C 语言编译的几个过程来进行了解
 
 在这里我偷个懒使用 C++ 来作为表示 (两个语言的处理流程大致都一样)
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>来源: https://hackingcpp.com/cpp/hello_world.html</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (3).png" alt=""><figcaption><p>来源: https://hackingcpp.com/cpp/hello_world.html</p></figcaption></figure>
 
 ## Preprocessor (预处理)
 
@@ -116,7 +132,7 @@ main:
 
 ## 汇编
 
-本质上来说汇编还是翻译的过程, 只不过这次是将汇编代码编译成机器代码, 不过此时生成的代码还是不可以运行
+使用汇编器将汇编代码转换为目标代码, 在 DOS 中, 目标文件的扩展名为 `.obj` 在 UNIX 中扩展名 `.o`&#x20;
 
 ```bash
 ┌──(jtz㉿JTZ)-[~/C]
@@ -131,4 +147,10 @@ hello.o: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically li
 ```
 
 ## 链接
+
+> 通常使用 C 编写的程序会使用库函数, 这些库函数已经预先编译好了, 库文件一般使用 `.lib` 或者 `.a` 扩展名存储
+
+1. 在此阶段的主要工作是将库文件的目标代码和我们程序的目标代码组合起来, 比如当我们在程序中调用在其他文件中调用的函数时, 链接器会将这些文件的目标代码与我们的程序链接起来. 从此我们可以得出结论 : <mark style="color:red;">**链接器的任务是将我们程序的目标代码与库文件和其他文件的目标代码链接起来**</mark>.&#x20;
+2. 链接器的输出是可执行文件, 生成的可执行文件的扩展名在 DOS 中为 `.exe` 在 UNXI 中为 `.out`
+3. 链接器出来讲目标代码与库文件的目标代码进行链接生成可执行文件外, 还会负责解析符号引用, 以确保所有函数和变量都能正确链接在一起
 
